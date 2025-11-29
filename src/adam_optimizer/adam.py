@@ -2,6 +2,7 @@ import math
 import numpy as np
 import torch
 
+from collections import defaultdict
 from typing import Iterable
 
 class Adam(torch.optim.Optimizer):
@@ -23,10 +24,20 @@ class Adam(torch.optim.Optimizer):
             raise ValueError("Invalid hyperparameters")
 
         super().__init__(params, defaults)
+        self.state = defaultdict()
         return
 
 
     def step(self) -> None:
 
         for p in self.params:
-            pass
+            if not self.state[p]:
+                self.state[p] = {
+                    "exp_avg": torch.zeros_like(p),
+                    "exp_avg_sq": torch.zeros_like(p),
+                    "step": 0
+                }
+            
+            grad = p.grad
+
+        return
