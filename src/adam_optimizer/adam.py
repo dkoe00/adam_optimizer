@@ -18,8 +18,12 @@ class Adam(torch.optim.Optimizer):
             "eps": eps,
         }
 
-        if lr <= 0 or any(0 >= beta or 1 <= beta for beta in betas) or eps <= 0:
-            raise ValueError("Invalid hyperparameters")
+        if lr <= 0:
+            raise ValueError("Invalid hyperparameters: lr must be > 0")
+        if any(0 >= beta or 1 <= beta for beta in betas):
+            raise ValueError("Invalid hyperparameters: betas must be > 0 and < 1")
+        if eps <= 0:
+            raise ValueError("Invalid hyperparameters: eps must be >0")
 
         super().__init__(params, defaults)
         return
