@@ -29,6 +29,11 @@ class Adam(torch.optim.Optimizer):
 
         for group in self.param_groups:
             for p in group["params"]:
+                grad = p.grad
+
+                if grad is None or grad.is_sparse:
+                    continue
+                
                 state = self.state[p]
                 if len(state) == 0:
                     self.state[p] = {
@@ -37,20 +42,15 @@ class Adam(torch.optim.Optimizer):
                         "step": 0
                     }
 
-                if p.grad is None:
-                    continue
-
-                self.state[p]["step"] += 1
-                
                 lr = group["lr"]
                 beta_1, beta_2 = group["betas"]
                 eps = group["eps"]
                 
-                grad = p.grad
-                m = self.state[p]["exp_avg"] * beta_1 + (1 - beta_1) * grad
-                v = self.state[p]["exp_avg_sq"] * beta_2 + (1 - beta_2) * grad ** 2
+                m = state["exp_avg"] * beta_1 + (1 - beta_1) * grad
+                v = state["exp_avg_sq"] * beta_2 + (1 - beta_2) * grad ** 2
 
-                t = self.state[p]["step"]
+                state["step"] += 1
+                t = state["step"]
                 a = lr * (math.sqrt(1 - beta_2 ** t)/(1 - beta_1 ** t))
 
                 with torch.no_grad():
