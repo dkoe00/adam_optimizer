@@ -45,6 +45,7 @@ class Adam(torch.optim.Optimizer):
                         "exp_avg_sq": torch.zeros_like(p),
                         "step": 0
                     }
+                    state = self.state[p]
 
                 lr = group["lr"]
                 beta_1, beta_2 = group["betas"]
