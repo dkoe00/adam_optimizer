@@ -54,3 +54,25 @@ class Adam():
     def step():
         #TODO @dkoe00: initialize state on first step
         return
+
+
+    def zero_grad(self, set_to_None: bool = False) -> None:
+
+        """
+        sets gradients of all parameters to zero or None
+
+        inputs:
+        set_to_None: bool, decide whether to replace all elements in the grads with zero or make the entire grad None
+
+        returns:
+        None
+        """
+
+        for group in self.param_groups:
+            for p in group["params"]:
+                if not set_to_None:
+                    p.grad = torch.zeros_like(p)
+                else:
+                    p.grad = None
+
+        return
