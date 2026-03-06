@@ -11,11 +11,13 @@ class Adam(torch.optim.Optimizer):
             lr: float = 0.001, 
             betas: tuple[float, float] = (0.9, 0.999),
             eps: float = 1e-8, 
+            weight_decay: float = 0,
         ) -> None:
         defaults = {
             "lr": lr,
             "betas": betas,
             "eps": eps,
+            "weight_decay": weight_decay
         }
 
         if lr <= 0:
@@ -24,12 +26,25 @@ class Adam(torch.optim.Optimizer):
             raise ValueError("Invalid hyperparameters: betas must be > 0 and < 1")
         if eps <= 0:
             raise ValueError("Invalid hyperparameters: eps must be >0")
+        #TODO @dkoe00: implement weight_decay check
 
         super().__init__(params, defaults)
         return
 
 
+    def zero_grad(self) -> None:
+
+        for group in self.param_groups:
+            for p in group["params"]:
+                p.grad = torch.zeros_like(p.grad)
+
+        return
+
+
+
     def step(self) -> None:
+
+        #TODO @dkoe00: add use of weight_decay parameter
 
         for group in self.param_groups:
             for p in group["params"]:
