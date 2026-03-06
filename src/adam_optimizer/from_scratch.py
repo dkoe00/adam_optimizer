@@ -48,6 +48,22 @@ class Adam():
 
         return
 
+    
+    def load_state_dict(self, state_dict: dict) -> None:
+
+        """
+        loads the state of the optimizer from an appropriate dict
+
+        inputs:
+        state_dict: dict, a dict containing the desired state of the optimizer
+
+        returns:
+        None
+        """
+
+        self.state = state_dict
+        return
+
 
     def state_dict(self) -> dict:
 
