@@ -7,7 +7,7 @@ class Adam():
 
     def __init__(
         self,
-        params: Iterable[torch.Tensor | dict],
+        params: Iterable[torch.Tensor],
         lr: float = 0.001,
         betas: tuple(float, float) = (0.9, 0.999),
         eps: float = 1e-8,
@@ -18,7 +18,7 @@ class Adam():
         initialize Adam object with given hyperparameters, sets up parameter groups, defaults, and state
 
         inputs:
-        params: Iterable[torch.Tensor | dict], Iterable of parameter groups,
+        params: Iterable[torch.Tensor], Iterable of parameter groups,
         lr: float, desired learning rate,
         betas: tuple(float, float), update rates for exponential moving averages,
         eps: float, regularization value to avoid zero division,
@@ -39,12 +39,6 @@ class Adam():
             group_dict = defaults
             group_dict[params] = group
             self.param_groups.append(group_dict)
-
-        self.state = {
-            "step": 0,
-            "exp_avg": None,
-            "exp_avg_sq": None,
-        }
 
         return
 
@@ -80,8 +74,28 @@ class Adam():
         return self.state
 
 
-    def step():
-        #TODO @dkoe00: initialize state on first step
+    def step(self) -> None:
+
+        """
+        perform one step of the optimizer
+
+        inputs:
+        None
+
+        returns:
+        None
+        """
+        
+        if not self.state:
+            self.state = {}
+            for group in self.param_groups:
+                for param in group:
+                    self.state[p] = {
+                        "step": 1,
+                        "exp_avg": None,
+                        "exp_avg_sq": None,
+                    }
+
         return
 
 
