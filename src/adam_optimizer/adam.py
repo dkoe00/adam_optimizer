@@ -46,21 +46,25 @@ class Adam(torch.optim.Optimizer):
         super().__init__(params, defaults)
         return
 
-    
-    def state_dict(self) -> dict:
+
+    def load_state_dict(self, state_dict: StateDict) -> None:
 
         """
-        return state of Adam object as dict
+        load Adam object's state from a StateDict
 
         inputs:
-        None
+        state_dict: StateDict, contains the desired object state
 
         returns:
-        dict, the state of this object
+        None
         """
 
-        return dict(self.state)
+        return super().load_state_dict(state_dict)
 
+
+    def state_dict(self) -> StateDict:
+        return super().state_dict()
+    
 
     def step(self) -> None:
 
@@ -70,7 +74,7 @@ class Adam(torch.optim.Optimizer):
         inputs:
         None
 
-        return:
+        returns:
         None
         """
 
@@ -111,20 +115,16 @@ class Adam(torch.optim.Optimizer):
         return
 
 
-    def zero_grad(self) -> None:
+    def zero_grad(self, set_to_none: bool = True) -> None:
 
         """
-        set gradients for all parameters to zero
+        zero the gradients of the parameters
 
-        input:
-        None
+        inputs:
+        set_to_none: bool, flag to set gradients to None rather than actual zeros
 
         returns:
         None
         """
 
-        for group in self.param_groups:
-            for p in group["params"]:
-                p.grad = torch.zeros_like(p.grad)
-
-        return
+        return super().zero_grad(set_to_none)
