@@ -15,7 +15,7 @@ class Adam():
     ):
 
         """
-        initialize Adam object with given hyperparameters
+        initialize Adam object with given hyperparameters, sets up parameter groups, defaults, and state
 
         inputs:
         params: Iterable[torch.Tensor | dict], Iterable of parameter groups,
@@ -23,6 +23,8 @@ class Adam():
         betas: tuple(float, float), update rates for exponential moving averages,
         eps: float, regularization value to avoid zero division,
         weight_decay: float, #TODO @dkoe00: document
+
+        returns: None
         """
 
         defaults = {
@@ -34,5 +36,21 @@ class Adam():
 
         self.param_groups = []
         for group in params:
-            group_dict = {}
-            self.param_groups.append()
+            group_dict = defaults
+            group_dict[params] = group
+            self.param_groups.append(group_dict)
+
+        self.state = {
+            "step": 0,
+            "exp_avg": None,
+            "exp_avg_sq": None,
+        }
+
+        return
+
+
+
+
+    def step():
+        #TODO @dkoe00: initialize state on first step
+        return
