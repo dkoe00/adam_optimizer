@@ -13,6 +13,21 @@ class Adam(torch.optim.Optimizer):
             eps: float = 1e-8, 
             weight_decay: float = 0,
         ) -> None:
+
+        """
+        initialize Adam object with the given hyperparameters
+
+        inputs:
+        params: Iterable[torch.Tensor | dict], existing parameters
+        lr: float, desired learning rate
+        betas: tuple[float, float], the update rates of the exponential moving averages
+        eps: float, regularization parameter to avoid zero division errors
+        weight_decay: float, #TODO @dkoe00: document
+
+        returns:
+        None
+        """
+
         defaults = {
             "lr": lr,
             "betas": betas,
@@ -34,6 +49,16 @@ class Adam(torch.optim.Optimizer):
 
     def zero_grad(self) -> None:
 
+        """
+        set gradients for all parameters to zero
+
+        input:
+        None
+
+        returns:
+        None
+        """
+
         for group in self.param_groups:
             for p in group["params"]:
                 p.grad = torch.zeros_like(p.grad)
@@ -43,6 +68,16 @@ class Adam(torch.optim.Optimizer):
 
 
     def step(self) -> None:
+
+        """
+        perform one optimization step
+
+        inputs:
+        None
+
+        return:
+        None
+        """
 
         #TODO @dkoe00: add use of weight_decay parameter
 
