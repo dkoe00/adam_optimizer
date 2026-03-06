@@ -46,25 +46,6 @@ class Adam(torch.optim.Optimizer):
         super().__init__(params, defaults)
         return
 
-
-    def zero_grad(self) -> None:
-
-        """
-        set gradients for all parameters to zero
-
-        input:
-        None
-
-        returns:
-        None
-        """
-
-        for group in self.param_groups:
-            for p in group["params"]:
-                p.grad = torch.zeros_like(p.grad)
-
-        return
-
     
     def state_dict(self) -> dict:
 
@@ -126,5 +107,24 @@ class Adam(torch.optim.Optimizer):
                     p -= a * m / (torch.sqrt(v) + eps)
                     self.state[p]["exp_avg"] = m
                     self.state[p]["exp_avg_sq"] = v
+
+        return
+
+
+    def zero_grad(self) -> None:
+
+        """
+        set gradients for all parameters to zero
+
+        input:
+        None
+
+        returns:
+        None
+        """
+
+        for group in self.param_groups:
+            for p in group["params"]:
+                p.grad = torch.zeros_like(p.grad)
 
         return
