@@ -65,6 +65,20 @@ class Adam(torch.optim.Optimizer):
 
         return
 
+    
+    def state_dict(self) -> dict:
+
+        """
+        return state of Adam object as dict
+
+        inputs:
+        None
+
+        returns:
+        dict, the state of this object
+        """
+
+        return dict(self.state)
 
 
     def step(self) -> None:
