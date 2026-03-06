@@ -3,73 +3,84 @@ import torch
 
 from typing import Iterable
 
-class Adam(torch.optim.Optimizer):
+class Adam():
 
     def __init__(
-            self, 
-            params: Iterable[torch.Tensor | dict],
-            lr: float = 0.001, 
-            betas: tuple[float, float] = (0.9, 0.999),
-            eps: float = 1e-8, 
-            weight_decay: float = 0,
-        ) -> None:
+        self,
+        params: Iterable[torch.Tensor],
+        lr: float = 0.001,
+        betas: tuple(float, float) = (0.9, 0.999),
+        eps: float = 1e-8,
+        weight_decay: float = 0.001,
+    ):
 
         """
-        initialize Adam object with the given hyperparameters
+        initialize Adam object with given hyperparameters, sets up parameter groups, defaults, and state
 
         inputs:
-        params: Iterable[torch.Tensor | dict], existing parameters
-        lr: float, desired learning rate
-        betas: tuple[float, float], the update rates of the exponential moving averages
-        eps: float, regularization parameter to avoid zero division errors
+        params: Iterable[torch.Tensor], Iterable of parameter groups,
+        lr: float, desired learning rate,
+        betas: tuple(float, float), update rates for exponential moving averages,
+        eps: float, regularization value to avoid zero division,
         weight_decay: float, #TODO @dkoe00: document
 
-        returns:
-        None
+        returns: None
         """
 
         defaults = {
             "lr": lr,
             "betas": betas,
             "eps": eps,
-            "weight_decay": weight_decay
+            "weight_decay": weight_decay,
         }
 
-        if lr <= 0:
-            raise ValueError("Invalid hyperparameters: lr must be > 0")
-        if any(0 >= beta or 1 <= beta for beta in betas):
-            raise ValueError("Invalid hyperparameters: betas must be > 0 and < 1")
-        if eps <= 0:
-            raise ValueError("Invalid hyperparameters: eps must be >0")
-        #TODO @dkoe00: implement weight_decay check
+        self.param_groups = []
+        for group in params:
+            group_dict = defaults
+            group_dict[params] = group
+            self.param_groups.append(group_dict)
 
-        super().__init__(params, defaults)
+        self.state = {}
+
         return
 
-
-    def load_state_dict(self, state_dict: StateDict) -> None:
+    
+    def load_state_dict(self, state_dict: dict) -> None:
 
         """
-        load Adam object's state from a StateDict
+        loads the state of the optimizer from an appropriate dict
 
         inputs:
-        state_dict: StateDict, contains the desired object state
+        state_dict: dict, a dict containing the desired state of the optimizer
 
         returns:
         None
         """
 
-        return super().load_state_dict(state_dict)
+        self.state = state_dict
+
+        return
 
 
-    def state_dict(self) -> StateDict:
-        return super().state_dict()
-    
+    def state_dict(self) -> dict:
+
+        """
+        exports the current state of the optimizer as a dict
+
+        inputs:
+        None
+
+        returns:
+        dict, state attribute of the optimizer at function call
+        """
+
+        return self.state
+
 
     def step(self) -> None:
 
         """
-        perform one optimization step
+        perform one step of the optimizer
 
         inputs:
         None
@@ -77,35 +88,34 @@ class Adam(torch.optim.Optimizer):
         returns:
         None
         """
-
-        #TODO @dkoe00: add use of weight_decay parameter
-
+        
         for group in self.param_groups:
-            for p in group["params"]:
-                grad = p.grad
-
-                if grad is None or grad.is_sparse:
-                    continue
-                
-                state = self.state[p]
-                if len(state) == 0:
-                    self.state[p] = {
-                        "exp_avg": torch.zeros_like(p),
-                        "exp_avg_sq": torch.zeros_like(p),
-                        "step": 0
+            for param in group:
+                state = self.state[param]
+                if not state:
+                    self.state[param] = {
+                        "step": 1,
+                        "exp_avg": torch.zeros_like(param),
+                        "exp_avg_sq": torch.zeros_like(param),
                     }
-                    state = self.state[p]
+                    state = self.state[param]
+
+                grad = param.grad
+                if not grad:
+                    continue
 
                 lr = group["lr"]
-                beta_1, beta_2 = group["betas"]
+                beta1, beta2 = group["betas"]
                 eps = group["eps"]
-                
-                m = state["exp_avg"] * beta_1 + (1 - beta_1) * grad
-                v = state["exp_avg_sq"] * beta_2 + (1 - beta_2) * grad ** 2
+                weight_decay = group["weight_decay"]
+                #TODO @dkoenig: implement weight decay functionality
+                                
+                m = state["exp_avg"] * beta1 + (1 - beta1) * grad
+                v = state["exp_avg_sq"] * beta2 + (1 - beta2) * grad ** 2
 
                 state["step"] += 1
                 t = state["step"]
-                a = lr * (math.sqrt(1 - beta_2 ** t)/(1 - beta_1 ** t))
+                a = lr * (math.sqrt(1 - beta2 ** t)/(1 - beta1 ** t))
 
                 with torch.no_grad():
                     p -= a * m / (torch.sqrt(v) + eps)
@@ -115,16 +125,23 @@ class Adam(torch.optim.Optimizer):
         return
 
 
-    def zero_grad(self, set_to_none: bool = True) -> None:
+    def zero_grad(self, set_to_None: bool = False) -> None:
 
         """
-        zero the gradients of the parameters
+        sets gradients of all parameters to zero or None
 
         inputs:
-        set_to_none: bool, flag to set gradients to None rather than actual zeros
+        set_to_None: bool, decide whether to replace all elements in the grads with zero or make the entire grad None
 
         returns:
         None
         """
 
-        return super().zero_grad(set_to_none)
+        for group in self.param_groups:
+            for p in group["params"]:
+                if not set_to_None:
+                    p.grad = torch.zeros_like(p)
+                else:
+                    p.grad = None
+
+        return
