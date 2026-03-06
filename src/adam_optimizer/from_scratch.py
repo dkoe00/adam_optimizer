@@ -40,6 +40,8 @@ class Adam():
             group_dict[params] = group
             self.param_groups.append(group_dict)
 
+        self.state = {}
+
         return
 
     
@@ -86,15 +88,38 @@ class Adam():
         None
         """
         
-        if not self.state:
-            self.state = {}
-            for group in self.param_groups:
-                for param in group:
-                    self.state[p] = {
+        for group in self.param_groups:
+            for param in group:
+                state = self.state[param]
+                if not state:
+                    self.state[param] = {
                         "step": 1,
-                        "exp_avg": None,
-                        "exp_avg_sq": None,
+                        "exp_avg": torch.zeros_like(param),
+                        "exp_avg_sq": torch.zeros_like(param),
                     }
+                    state = self.state[param]
+
+                grad = param.grad
+                if not grad:
+                    continue
+
+                lr = group["lr"]
+                beta1, beta2 = group["betas"]
+                eps = group["eps"]
+                weight_decay = group["weight_decay"]
+                #TODO @dkoenig: implement weight decay functionality
+                                
+                m = state["exp_avg"] * beta1 + (1 - beta1) * grad
+                v = state["exp_avg_sq"] * beta2 + (1 - beta2) * grad ** 2
+
+                state["step"] += 1
+                t = state["step"]
+                a = lr * (math.sqrt(1 - beta2 ** t)/(1 - beta1 ** t))
+
+                with torch.no_grad():
+                    p -= a * m / (torch.sqrt(v) + eps)
+                    self.state[p]["exp_avg"] = m
+                    self.state[p]["exp_avg_sq"] = v
 
         return
 
