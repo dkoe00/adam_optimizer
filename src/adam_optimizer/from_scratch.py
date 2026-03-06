@@ -49,6 +49,19 @@ class Adam():
         return
 
 
+    def state_dict(self) -> dict:
+
+        """
+        exports the current state of the optimizer as a dict
+
+        inputs:
+        None
+
+        returns:
+        dict, state attribute of the optimizer at function call
+        """
+
+        return self.state
 
 
     def step():
