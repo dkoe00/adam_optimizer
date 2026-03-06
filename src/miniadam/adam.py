@@ -11,7 +11,7 @@ class Adam():
         lr: float = 0.001,
         betas: tuple(float, float) = (0.9, 0.999),
         eps: float = 1e-8,
-        weight_decay: float = 0.001,
+        weight_decay: float = 0,
     ):
 
         """
