@@ -14,7 +14,7 @@ Parameters:
 - lr: float, learning rate used for gradient descent
 - betas: tuple(float, float), update rates for the exponential moving averages
 - eps: float, regularization parameter to avoid zero division
-- weight_decay: float, tbd
+- weight_decay: float, implemented as decoupled weight decay like in AdamW
 
 Methods:
 
