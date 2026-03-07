@@ -22,7 +22,7 @@ class Adam():
         lr: float, desired learning rate,
         betas: tuple(float, float), update rates for exponential moving averages,
         eps: float, regularization value to avoid zero division,
-        weight_decay: float, #TODO @dkoe00: document
+        weight_decay: float, parameter for decoupled weight decay like in AdamW
 
         returns: None
         """
@@ -118,7 +118,8 @@ class Adam():
                 a = lr * (math.sqrt(1 - beta2 ** t)/(1 - beta1 ** t))
 
                 with torch.no_grad():
-                    p -= a * m / (torch.sqrt(v) + eps)
+                    param -= lr * weight_decay * param
+                    param -= a * m / (torch.sqrt(v) + eps)
                     self.state[p]["exp_avg"] = m
                     self.state[p]["exp_avg_sq"] = v
 
@@ -138,10 +139,10 @@ class Adam():
         """
 
         for group in self.param_groups:
-            for p in group["params"]:
+            for param in group["params"]:
                 if not set_to_None:
-                    p.grad = torch.zeros_like(p)
+                    param.grad = torch.zeros_like(param)
                 else:
-                    p.grad = None
+                    param.grad = None
 
         return
