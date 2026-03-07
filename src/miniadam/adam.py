@@ -120,8 +120,8 @@ class Adam():
                 with torch.no_grad():
                     param -= lr * weight_decay * param
                     param -= a * m / (torch.sqrt(v) + eps)
-                    self.state[p]["exp_avg"] = m
-                    self.state[p]["exp_avg_sq"] = v
+                    self.state[param]["exp_avg"] = m
+                    self.state[param]["exp_avg_sq"] = v
 
         return
 
