@@ -57,6 +57,11 @@ class Adam():
         None
         """
 
+        for param_dict in state_dict:
+            if param_dict is not None and param_dict.keys() != ["step", "exp_avg", "exp_avg_sq"]:
+                print("ERROR: invalid state dict")
+                return
+
         self.state = state_dict
 
         return
@@ -108,7 +113,6 @@ class Adam():
                 beta1, beta2 = group["betas"]
                 eps = group["eps"]
                 weight_decay = group["weight_decay"]
-                #TODO @dkoenig: implement weight decay functionality
                                 
                 m = state["exp_avg"] * beta1 + (1 - beta1) * grad
                 v = state["exp_avg_sq"] * beta2 + (1 - beta2) * grad ** 2
