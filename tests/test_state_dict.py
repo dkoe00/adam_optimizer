@@ -1,11 +1,11 @@
 import pytest
 import torch
 
-import miniadam
+from adam import Adam
 
 
 test_params = [torch.randn(10,i) for i in range(5)]
-test_adam = miniadam(test_params)
+test_adam = Adam(test_params)
 
 def simulate_gradients(params: torch.Tensor) -> None:
     params.grad == torch.randn_like(params)

@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-import miniadam
+from adam import Adam
 
 
 def test_init_correct_input():
@@ -14,7 +14,7 @@ def test_init_correct_input():
     for i in range(5):
         params.append(torch.randn(20,i))
 
-    test_adam = miniadam(params, lr, betas, eps, weight_decay)
+    test_adam = Adam(params, lr, betas, eps, weight_decay)
 
     for i, group in enumerate(test_adam.param_groups):
         assert group.lr == lr
