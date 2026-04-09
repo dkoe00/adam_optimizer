@@ -49,7 +49,7 @@ class Adam(torch.optim.Optimizer):
         """
 
         loss = None
-        if closure:
+        if closure is not None:
             loss = closure()
         
         for group in self.param_groups:
@@ -58,6 +58,9 @@ class Adam(torch.optim.Optimizer):
                 grad = param.grad
                 if grad is None:
                     continue
+
+                if grad.is_sparse:
+                    raise RuntimeError("Sparse gradients not supported. Please use a dedicated optimizer.")
 
                 try:
                     state = self.state[param]
