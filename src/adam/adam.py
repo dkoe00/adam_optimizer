@@ -3,7 +3,7 @@ import torch
 
 from typing import Iterable, Tuple
 
-class Adam():
+class Adam(torch.optim.Optimizer):
 
     def __init__(
         self,
@@ -20,7 +20,7 @@ class Adam():
         inputs:
         params: Iterable[torch.Tensor], Iterable of parameter groups,
         lr: float, desired learning rate,
-        betas: tuple(float, float), update rates for exponential moving averages,
+        betas: tuple[float, float], update rates for exponential moving averages,
         eps: float, regularization value to avoid zero division,
         weight_decay: float, parameter for decoupled weight decay like in AdamW
 
@@ -34,13 +34,7 @@ class Adam():
             "weight_decay": weight_decay,
         }
 
-        self.param_groups = []
-        for group in params:
-            group_dict = defaults
-            group_dict[params] = group
-            self.param_groups.append(group_dict)
-
-        self.state = {}
+        super().__init__(params, defaults)
 
         return
 
@@ -57,12 +51,8 @@ class Adam():
         None
         """
 
-        for param_dict in state_dict:
-            if param_dict is not None and param_dict.keys() != ["step", "exp_avg", "exp_avg_sq"]:
-                print("ERROR: invalid state dict")
-                return
-
-        self.state = state_dict
+        self.param_groups = state_dict["param_groups"]
+        self.state = state_dict["state"]
 
         return
 
@@ -76,10 +66,10 @@ class Adam():
         None
 
         returns:
-        dict, state attribute of the optimizer at function call
+        dict, state and param_groups of the optimizer at function call
         """
 
-        return self.state
+        return {"state": self.state, "param_groups": self.param_groups}
 
 
     def step(self) -> None:
