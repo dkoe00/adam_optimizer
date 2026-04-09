@@ -1,7 +1,7 @@
 import math
 import torch
 
-from typing import Iterable
+from typing import Iterable, Tuple
 
 class Adam():
 
@@ -9,7 +9,7 @@ class Adam():
         self,
         params: Iterable[torch.Tensor],
         lr: float = 0.001,
-        betas: tuple(float, float) = (0.9, 0.999),
+        betas: Tuple[float, float] = (0.9, 0.999),
         eps: float = 1e-8,
         weight_decay: float = 0,
     ):
