@@ -1,4 +1,4 @@
-# miniadam
+# adam
 
 This is my minimal implementation of the optimization algorithm proposed by Kingma and Ba in their paper "Adam: A Method for Stochastic Optimization" (2015).
 
