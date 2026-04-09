@@ -52,19 +52,21 @@ class Adam(torch.optim.Optimizer):
         """
         
         for group in self.param_groups:
-            for param in group:
-                state = self.state[param]
-                if not state:
+            for param in group["params"]:
+
+                grad = param.grad
+                if grad is None:
+                    continue
+
+                try:
+                    state = self.state[param]
+                except KeyError:
                     self.state[param] = {
-                        "step": 1,
+                        "step": 0,
                         "exp_avg": torch.zeros_like(param),
                         "exp_avg_sq": torch.zeros_like(param),
                     }
                     state = self.state[param]
-
-                grad = param.grad
-                if not grad:
-                    continue
 
                 lr = group["lr"]
                 beta1, beta2 = group["betas"]
