@@ -37,40 +37,7 @@ class Adam(torch.optim.Optimizer):
         super().__init__(params, defaults)
 
         return
-
     
-    def load_state_dict(self, state_dict: dict) -> None:
-
-        """
-        loads the state of the optimizer from an appropriate dict
-
-        inputs:
-        state_dict: dict, a dict containing the desired state of the optimizer
-
-        returns:
-        None
-        """
-
-        self.param_groups = state_dict["param_groups"]
-        self.state = state_dict["state"]
-
-        return
-
-
-    def state_dict(self) -> dict:
-
-        """
-        exports the current state of the optimizer as a dict
-
-        inputs:
-        None
-
-        returns:
-        dict, state and param_groups of the optimizer at function call
-        """
-
-        return {"state": self.state, "param_groups": self.param_groups}
-
 
     def step(self) -> None:
 
