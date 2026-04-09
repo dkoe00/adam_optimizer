@@ -62,15 +62,13 @@ class Adam(torch.optim.Optimizer):
                 if grad.is_sparse:
                     raise RuntimeError("Sparse gradients not supported. Please use a dedicated optimizer.")
 
-                try:
-                    state = self.state[param]
-                except KeyError:
+                if self.state[param] == {}:
                     self.state[param] = {
                         "step": 0,
                         "exp_avg": torch.zeros_like(param),
                         "exp_avg_sq": torch.zeros_like(param),
                     }
-                    state = self.state[param]
+                state = self.state[param]
 
                 lr = group["lr"]
                 beta1, beta2 = group["betas"]
