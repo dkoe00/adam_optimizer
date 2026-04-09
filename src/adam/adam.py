@@ -1,7 +1,7 @@
 import math
 import torch
 
-from typing import Iterable, Tuple
+from typing import Callable, Iterable, Tuple
 
 class Adam(torch.optim.Optimizer):
 
@@ -36,17 +36,21 @@ class Adam(torch.optim.Optimizer):
         return
     
 
-    def step(self) -> None:
+    def step(self, closure: Callable[[], torch.Tensor] | None = None) -> torch.Tensor | None:
 
         """
         perform one step of the optimizer
 
         inputs:
-        None
+        closure: Callable, optional reevaluation of the model
 
         returns:
         None
         """
+
+        loss = None
+        if closure:
+            loss = closure()
         
         for group in self.param_groups:
             for param in group["params"]:
@@ -81,7 +85,7 @@ class Adam(torch.optim.Optimizer):
                     self.state[param]["exp_avg"] = m
                     self.state[param]["exp_avg_sq"] = v
 
-        return
+        return loss
 
 
     def zero_grad(self, set_to_None: bool = False) -> None:
