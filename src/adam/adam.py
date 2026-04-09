@@ -11,7 +11,6 @@ class Adam(torch.optim.Optimizer):
         lr: float = 0.001,
         betas: Tuple[float, float] = (0.9, 0.999),
         eps: float = 1e-8,
-        weight_decay: float = 0,
     ):
 
         """
@@ -22,7 +21,6 @@ class Adam(torch.optim.Optimizer):
         lr: float, desired learning rate,
         betas: tuple[float, float], update rates for exponential moving averages,
         eps: float, regularization value to avoid zero division,
-        weight_decay: float, parameter for decoupled weight decay like in AdamW
 
         returns: None
         """
@@ -31,7 +29,6 @@ class Adam(torch.optim.Optimizer):
             "lr": lr,
             "betas": betas,
             "eps": eps,
-            "weight_decay": weight_decay,
         }
 
         super().__init__(params, defaults)
@@ -71,7 +68,6 @@ class Adam(torch.optim.Optimizer):
                 lr = group["lr"]
                 beta1, beta2 = group["betas"]
                 eps = group["eps"]
-                weight_decay = group["weight_decay"]
                                 
                 m = state["exp_avg"] * beta1 + (1 - beta1) * grad
                 v = state["exp_avg_sq"] * beta2 + (1 - beta2) * grad ** 2
@@ -81,7 +77,6 @@ class Adam(torch.optim.Optimizer):
                 a = lr * (math.sqrt(1 - beta2 ** t)/(1 - beta1 ** t))
 
                 with torch.no_grad():
-                    param -= lr * weight_decay * param
                     param -= a * m / (torch.sqrt(v) + eps)
                     self.state[param]["exp_avg"] = m
                     self.state[param]["exp_avg_sq"] = v
