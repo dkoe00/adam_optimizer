@@ -91,13 +91,13 @@ class Adam(torch.optim.Optimizer):
         return loss
 
 
-    def zero_grad(self, set_to_None: bool = False) -> None:
+    def zero_grad(self, set_to_none: bool = False) -> None:
 
         """
         sets gradients of all parameters to zero or None
 
         inputs:
-        set_to_None: bool, decide whether to replace all elements in the grads with zero or make the entire grad None
+        set_to_none: bool, decide whether to replace all elements in the grads with zero or make the entire grad None
 
         returns:
         None
@@ -105,8 +105,10 @@ class Adam(torch.optim.Optimizer):
 
         for group in self.param_groups:
             for param in group["params"]:
-                if not set_to_None:
-                    param.grad = torch.zeros_like(param)
+                if not set_to_none:
+                    if param.grad is not None:
+                        param.grad.detach_()
+                        param.grad.zero_()
                 else:
                     param.grad = None
 
