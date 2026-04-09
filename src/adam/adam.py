@@ -36,7 +36,7 @@ class Adam(torch.optim.Optimizer):
         return
     
 
-    def step(self, closure: Callable[[], torch.Tensor] | None = None) -> torch.Tensor | None:
+    def step(self, closure: Callable[[], float | torch.Tensor] | None = None) -> float | torch.Tensor | None:
 
         """
         perform one step of the optimizer
