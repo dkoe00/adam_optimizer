@@ -4,26 +4,21 @@ This is my minimal implementation of the optimization algorithm proposed by King
 
 At the moment, please note that this is a work in progress.
 
-The Adam class is an optimizer with the following methods and attributes:
+The Adam class is an optimizer inheriting from torch.optim.Optimizer. The class's constructor can be called as follows:
 
 ```
-class Adam(params, lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0)
+adam = Adam(params, lr, betas, eps)
 ```
-Parameters:
-- params: Iterable[torch.Tensor], all model parameters that are going to be optimized
-- lr: float, learning rate used for gradient descent
-- betas: tuple(float, float), update rates for the exponential moving averages
-- eps: float, regularization parameter to avoid zero division
-- weight_decay: float, implemented as decoupled weight decay like in AdamW
+with arguments:
+- params: Iterable[torch.Tensor], all model parameters that are going to be optimized (required)
+- lr: float = 0.001, learning rate used for gradient descent (optional)
+- betas: tuple[float, float] = (0.9,0.999), update rates for the exponential moving averages (optional)
+- eps: float = 1e-8, regularization parameter to avoid zero division (optional)
 
-Methods:
+The other methods, particularly `Adam.step`, follow the standard contract for pytorch optimizers, minus optional arguments listed in the torch.optim docs but not above.
 
-```load_state_dict(self, state_dict: dict) -> None```:
-- loads the desired state of the optimizer from a saved dict
-- inputs: state_dict, a dict containing the desired state
-- returns: None
-
-```state_dict(self) -> dict```:
-tbd
+A training loop for a basic GPT-like transformer model on the tiny shakespeare dataset (as a hommage to Andrej Karpathy's excellent [Neural Networks: Zero to Hero](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) lecture series) can be found in the training_demo notebook.
+Please note that it is currently missing validation, sampling, and progress visualization, which I will add shortly.
 
 There is also a working training loop using an implementation of the algorithm to be found in the first_implementation notebook.
+Please note that this is purely for educational purposes and does not follow best practices for model training with pytorch or the standard optimizer contract.
