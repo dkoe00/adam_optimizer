@@ -1,6 +1,6 @@
 # adam
 
-This is my minimal implementation of the optimization algorithm proposed by Kingma and Ba in their paper "Adam: A Method for Stochastic Optimization" (2015).
+This is our minimal implementation of the optimization algorithm proposed by Kingma and Ba in their paper "Adam: A Method for Stochastic Optimization" (2015).
 
 The Adam class is an optimizer inheriting from torch.optim.Optimizer. The class's constructor can be called as follows:
 
@@ -15,7 +15,7 @@ with arguments:
 
 The other methods, particularly `Adam.step`, follow the standard contract for pytorch optimizers, minus optional arguments listed in the torch.optim docs but not above.
 
-Two training loops for a GPT-like transformer model on the tiny shakespeare dataset (as a hommage to Andrej Karpathy's excellent [Neural Networks: Zero to Hero](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) lecture series) can be found in the training_demo notebook, one using my implementation of the optimizer and one using the standard torch.optim.Adam optimizer.
+Two training loops for a GPT-like transformer model on the tiny shakespeare dataset (as a hommage to Andrej Karpathy's excellent [Neural Networks: Zero to Hero](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) lecture series) can be found in the training_demo notebook, one using our implementation of the optimizer and one using the standard torch.optim.Adam optimizer.
 The notebook demonstrates that model training with our implementation works just as well as using the official pytorch implementation.
 The checkpoints directory contains the trained models for reference.
 
